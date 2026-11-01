@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "AdsRulesConfig", menuName = "OneUp/Ads/AdsRulesConfig")]
 public class AdsRulesConfig : ScriptableObject
 {
     public const string FileName = "AdsRulesConfig";

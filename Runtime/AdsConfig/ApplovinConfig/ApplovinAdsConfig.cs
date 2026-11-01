@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 [Serializable]
-[CreateAssetMenu(fileName = "ApplovinAdsConfig", menuName = "OneUp/Ads/ApplovinAdsConfig")]
 public class ApplovinAdsConfig : BaseAdsConfig
 {
     public string key;

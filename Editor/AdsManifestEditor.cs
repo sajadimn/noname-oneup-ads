@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -30,6 +31,37 @@ public static class AdsManifestEditor
         GoogleAdapterAndroidPackage,
         GoogleAdapterIosPackage,
     };
+
+    public static List<AdsSdkChange> GetChanges(string manifestJson, AdsSdkVersions versions)
+    {
+        JObject dependencies = (JObject) JObject.Parse(manifestJson)["dependencies"];
+        return GetPackages(versions)
+            .Where(x => dependencies[x.Key] != null && (string) dependencies[x.Key] != x.Value)
+            .Select(x => new AdsSdkChange {package = x.Key, current = (string) dependencies[x.Key], target = x.Value})
+            .ToList();
+    }
+
+    public static string ApplyVersions(string manifestJson, AdsSdkVersions versions)
+    {
+        JObject manifest = JObject.Parse(manifestJson);
+        foreach (AdsSdkChange change in GetChanges(manifestJson, versions))
+            manifest["dependencies"][change.package] = change.target;
+
+        return manifest.ToString(Formatting.Indented);
+    }
+
+    private static Dictionary<string, string> GetPackages(AdsSdkVersions versions)
+    {
+        return new Dictionary<string, string>
+        {
+            {AdMobPackage, versions.adMob},
+            {ApplovinPackage, versions.applovin},
+            {MintegralAndroidPackage, versions.mintegralAndroid},
+            {MintegralIosPackage, versions.mintegralIos},
+            {GoogleAdapterAndroidPackage, versions.googleAdapterAndroid},
+            {GoogleAdapterIosPackage, versions.googleAdapterIos},
+        };
+    }
 
     public static string AddSdks(string manifestJson)
     {

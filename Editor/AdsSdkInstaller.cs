@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.PackageManager;
@@ -18,6 +20,8 @@ public static class AdsSdkInstaller
         "Tapsell.Mediation.Editor.DependencyManager, Tapsell.Mediation.Editor";
     private const string AndroidResolver = "GooglePlayServices.PlayServicesResolver, Google.JarResolver";
     private const string AppKeyWarnedKey = "OneUp.Ads.TapsellAppKeyWarned";
+    private const string TapsellUpdateKey = "OneUp.Ads.TapsellUpdate";
+    private const string TapsellRefreshKey = "OneUp.Ads.TapsellRefresh";
     private const string AttemptsKey = "OneUp.Ads.InstallAttempts";
 
     private static bool isRunning;
@@ -46,6 +50,9 @@ public static class AdsSdkInstaller
     private static void RunNextStep()
     {
         if (isRunning)
+            return;
+
+        if (RunPendingTapsellUpdate())
             return;
 
         string[] missingTapsell = AdsInstallPlanner.GetMissingTapsellPackages(File.Exists, AdsSdkVersionsConfig.Load().tapsell);
@@ -107,6 +114,73 @@ public static class AdsSdkInstaller
 
         SessionState.SetBool(AppKeyWarnedKey, true);
         Debug.LogWarning("AdsSdkInstaller - Tapsell needs its app key. Set it in Project Settings > Tapsell Mediation.");
+    }
+
+    [MenuItem("OneUp/Ads/Update SDKs")]
+    public static void UpdateSdks()
+    {
+        AdsSdkVersions versions = AdsSdkVersionsConfig.Load();
+        List<string> lines = AdsManifestEditor.GetChanges(File.ReadAllText(ManifestPath), versions)
+            .Select(x => $"{x.package}: {x.current} > {x.target}").ToList();
+        string tapsellVersion = GetInstalledTapsellVersion();
+        if (NeedsTapsellUpdate(versions, tapsellVersion))
+            lines.Add($"Tapsell: {tapsellVersion} > {versions.tapsell}");
+
+        if (lines.Count == 0)
+        {
+            EditorUtility.DisplayDialog("Update SDKs", "All SDKs already match AdsSdkVersionsConfig.", "OK");
+            return;
+        }
+
+        if (EditorUtility.DisplayDialog("Update SDKs", string.Join("\n", lines), "Update", "Cancel"))
+            ApplyUpdate();
+    }
+
+    public static void ApplyUpdate()
+    {
+        AdsSdkVersions versions = AdsSdkVersionsConfig.Load();
+        File.WriteAllText(ManifestPath, AdsManifestEditor.ApplyVersions(File.ReadAllText(ManifestPath), versions));
+        if (NeedsTapsellUpdate(versions, GetInstalledTapsellVersion()))
+        {
+            string[] packages = AdsInstallPlanner.GetMissingTapsellPackages(_ => false, versions.tapsell);
+            SessionState.SetString(TapsellUpdateKey, string.Join(";", packages));
+            SessionState.SetBool(TapsellRefreshKey, true);
+        }
+
+        Client.Resolve();
+        RunNextStep();
+    }
+
+    private static bool NeedsTapsellUpdate(AdsSdkVersions versions, string installedVersion)
+    {
+        return installedVersion != null && installedVersion != versions.tapsell;
+    }
+
+    private static string GetInstalledTapsellVersion()
+    {
+        return File.Exists(TapsellDependenciesPath)
+            ? AdsInstallPlanner.GetTapsellVersion(File.ReadAllText(TapsellDependenciesPath))
+            : null;
+    }
+
+    private static bool RunPendingTapsellUpdate()
+    {
+        string pending = SessionState.GetString(TapsellUpdateKey, string.Empty);
+        if (string.IsNullOrEmpty(pending))
+        {
+            if (!SessionState.GetBool(TapsellRefreshKey, false))
+                return false;
+
+            SessionState.EraseBool(TapsellRefreshKey);
+            RefreshTapsellDependencies();
+            return false;
+        }
+
+        string[] packages = pending.Split(';');
+        SessionState.SetString(TapsellUpdateKey, string.Join(";", packages.Skip(1)));
+        isRunning = true;
+        DownloadAndImport(packages[0]);
+        return true;
     }
 
     private static void WriteManifest()

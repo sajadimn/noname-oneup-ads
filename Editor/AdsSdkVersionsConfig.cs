@@ -1,7 +1,6 @@
 using UnityEditor;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "AdsSdkVersionsConfig", menuName = "OneUp/Ads/AdsSdkVersionsConfig")]
 public class AdsSdkVersionsConfig : ScriptableObject
 {
     public const string AssetPath = "Assets/Settings/Ads/AdsSdkVersionsConfig.asset";

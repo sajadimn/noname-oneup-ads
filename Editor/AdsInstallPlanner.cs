@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 public enum AdsInstallStep
 {
@@ -17,6 +18,12 @@ public static class AdsInstallPlanner
     public const string TapsellLegacyDll = "Assets/Tapsell/Mediation/Adapter/Legacy/Tapsell.Mediation.Adapter.Legacy.dll";
     public const string TapsellMainPackage = "TapsellMediation_" + TapsellVersion + ".unitypackage";
     public const string TapsellLegacyPackage = "TapsellMediation_LegacyAdapter_" + TapsellVersion + ".unitypackage";
+
+    public static string GetTapsellVersion(string dependenciesXml)
+    {
+        Match match = Regex.Match(dependenciesXml, "tapsell-unity:([^\"]+)\"");
+        return match.Success ? match.Groups[1].Value : null;
+    }
 
     public static string[] GetMissingTapsellPackages(Func<string, bool> fileExists)
     {

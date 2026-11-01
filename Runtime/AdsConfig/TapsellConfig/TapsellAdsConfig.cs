@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 
 [Serializable]
-[CreateAssetMenu(fileName = "TapsellAdsConfig", menuName = "OneUp/Ads/TapsellAdsConfig")]
 public class TapsellAdsConfig : BaseAdsConfig
 {
     public string key;

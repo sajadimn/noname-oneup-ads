@@ -17,7 +17,7 @@ public class AdMobAds : BaseAds
     public override void Init(BaseAdsConfig _config)
     {
         config = _config as AdMobAdsConfig;
-        GoogleConsentManager.Instance.InitializeConsent();
+        GoogleConsentManager.Instance.InitializeConsent(InitializeAds);
     }
 
     public override void InitializeAds()

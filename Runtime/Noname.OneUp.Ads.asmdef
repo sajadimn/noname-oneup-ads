@@ -4,6 +4,7 @@
     "references": [
         "Noname.OneUp.Singleton",
         "Noname.OneUp.Region",
+        "Noname.OneUp.GoogleConsent",
         "MaxSdk.Scripts"
     ],
     "includePlatforms": [],

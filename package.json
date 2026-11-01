@@ -1,7 +1,7 @@
 {
   "name": "noname-oneup-ads",
   "displayName": "Ads",
-  "version": "1.0.1",
+  "version": "1.1.1",
   "unity": "2021.3",
   "license": "Copyright (c) Noname.OneUp All rights reserved. ",
   "type": "Tools",
@@ -12,7 +12,8 @@
   },
   "gitDependencies": {
     "noname-oneup-singleton": "https://github.com/sajadimn/noname-oneup-singleton.git",
-    "noname-oneup-region": "https://github.com/sajadimn/noname-oneup-region.git"
+    "noname-oneup-region": "https://github.com/sajadimn/noname-oneup-region.git",
+    "noname-oneup-google-consent": "https://github.com/sajadimn/noname-oneup-google-consent.git"
   },
   "samples": [],
   "hideInEditor": true,

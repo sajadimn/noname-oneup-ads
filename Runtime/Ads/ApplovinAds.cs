@@ -34,7 +34,7 @@ public class ApplovinAds : BaseAds
     public override void Init(BaseAdsConfig _config)
     {
         config = _config as ApplovinAdsConfig;
-        GoogleConsentManager.Instance.InitializeConsent();
+        GoogleConsentManager.Instance.InitializeConsent(InitializeAds);
     }
 
     public override void InitializeAds()

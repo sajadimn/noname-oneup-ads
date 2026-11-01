@@ -1,0 +1,29 @@
+{
+    "name": "Noname.OneUp.Ads",
+    "rootNamespace": "",
+    "references": [
+        "Noname.OneUp.Singleton",
+        "Noname.OneUp.Region",
+        "MaxSdk.Scripts"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.google.ads.mobile",
+            "expression": "",
+            "define": "ONEUP_ADMOB"
+        },
+        {
+            "name": "com.applovin.mediation.ads",
+            "expression": "",
+            "define": "ONEUP_APPLOVIN"
+        }
+    ],
+    "noEngineReferences": false
+}

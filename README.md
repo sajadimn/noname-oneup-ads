@@ -11,7 +11,7 @@ Add these to `Packages/manifest.json` before this package, or it cannot compile:
 
 ## How to use
 1. Add this package. It creates `AdMobAdsConfig`, `ApplovinAdsConfig` and `TapsellAdsConfig` in `Assets/Settings/Resources/Ads`.
-2. The three ad SDKs install automatically. If one fails, for example with no internet, run `OneUp/Ads/Install SDKs` after restarting Unity.
+2. The three ad SDKs install automatically. The install continues by itself after each Unity reload. If it fails, for example with no internet, run `OneUp/Ads/Install SDKs`.
 3. Enter your keys in the three config assets. AdMob and AppLovin have separate Android and iOS keys.
 4. Call `AdsManager.Instance.Init()`. No prefab or scene object is needed.
 

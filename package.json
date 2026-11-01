@@ -1,14 +1,15 @@
 {
   "name": "noname-oneup-ads",
   "displayName": "Ads",
-  "version": "1.1.1",
-  "unity": "2021.3",
+  "version": "1.2.0",
+  "unity": "2023.2",
   "license": "Copyright (c) Noname.OneUp All rights reserved. ",
   "type": "Tools",
   "category": "Utilities",
   "description": "This package contains the ads manager for AdMob, AppLovin MAX and Tapsell.",
   "dependencies": {
-    "com.unity.nuget.newtonsoft-json": "3.2.1"
+    "com.unity.nuget.newtonsoft-json": "3.2.1",
+    "com.unity.ugui": "2.0.0"
   },
   "gitDependencies": {
     "noname-oneup-singleton": "https://github.com/sajadimn/noname-oneup-singleton.git",

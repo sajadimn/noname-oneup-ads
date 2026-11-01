@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -22,21 +21,30 @@ public static class AdsManifestEditor
     private const string GoogleAdapterAndroidPackage = "com.applovin.mediation.adapters.google.android";
     private const string GoogleAdapterIosPackage = "com.applovin.mediation.adapters.google.ios";
 
-    private static readonly Dictionary<string, string> Packages = new Dictionary<string, string>
+    private static readonly string[] PackageNames =
     {
-        {AdMobPackage, AdMobVersion},
-        {ApplovinPackage, ApplovinVersion},
-        {MintegralAndroidPackage, MintegralAndroidVersion},
-        {MintegralIosPackage, MintegralIosVersion},
-        {GoogleAdapterAndroidPackage, GoogleAdapterAndroidVersion},
-        {GoogleAdapterIosPackage, GoogleAdapterIosVersion},
+        AdMobPackage,
+        ApplovinPackage,
+        MintegralAndroidPackage,
+        MintegralIosPackage,
+        GoogleAdapterAndroidPackage,
+        GoogleAdapterIosPackage,
     };
 
     public static string AddSdks(string manifestJson)
     {
+        return AddSdks(manifestJson, new AdsSdkVersions());
+    }
+
+    public static string AddSdks(string manifestJson, AdsSdkVersions versions)
+    {
         JObject manifest = JObject.Parse(manifestJson);
-        foreach (KeyValuePair<string, string> package in Packages)
-            AddDependency(manifest, package.Key, package.Value);
+        AddDependency(manifest, AdMobPackage, versions.adMob);
+        AddDependency(manifest, ApplovinPackage, versions.applovin);
+        AddDependency(manifest, MintegralAndroidPackage, versions.mintegralAndroid);
+        AddDependency(manifest, MintegralIosPackage, versions.mintegralIos);
+        AddDependency(manifest, GoogleAdapterAndroidPackage, versions.googleAdapterAndroid);
+        AddDependency(manifest, GoogleAdapterIosPackage, versions.googleAdapterIos);
 
         AddRegistry(manifest, "AppLovin MAX Unity", ApplovinRegistryUrl, "com.applovin.mediation.ads",
             "com.applovin.mediation.adapters", "com.applovin.mediation.dsp");
@@ -64,7 +72,7 @@ public static class AdsManifestEditor
     public static bool HasSdks(string manifestJson)
     {
         JToken dependencies = JObject.Parse(manifestJson)["dependencies"];
-        return dependencies != null && Packages.Keys.All(x => dependencies[x] != null);
+        return dependencies != null && PackageNames.All(x => dependencies[x] != null);
     }
 
     private static void AddDependency(JObject manifest, string package, string version)

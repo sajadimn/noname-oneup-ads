@@ -18,15 +18,20 @@ public static class AdsInstallPlanner
     public const string TapsellMainPackage = "TapsellMediation_" + TapsellVersion + ".unitypackage";
     public const string TapsellLegacyPackage = "TapsellMediation_LegacyAdapter_" + TapsellVersion + ".unitypackage";
 
-    private static readonly Dictionary<string, string> TapsellFiles = new Dictionary<string, string>
-    {
-        {TapsellMainDll, TapsellMainPackage},
-        {TapsellLegacyDll, TapsellLegacyPackage},
-    };
-
     public static string[] GetMissingTapsellPackages(Func<string, bool> fileExists)
     {
-        return TapsellFiles.Where(x => !fileExists(x.Key)).Select(x => x.Value).ToArray();
+        return GetMissingTapsellPackages(fileExists, TapsellVersion);
+    }
+
+    public static string[] GetMissingTapsellPackages(Func<string, bool> fileExists, string version)
+    {
+        Dictionary<string, string> files = new Dictionary<string, string>
+        {
+            {TapsellMainDll, $"TapsellMediation_{version}.unitypackage"},
+            {TapsellLegacyDll, $"TapsellMediation_LegacyAdapter_{version}.unitypackage"},
+        };
+
+        return files.Where(x => !fileExists(x.Key)).Select(x => x.Value).ToArray();
     }
 
     public static AdsInstallStep GetNextStep(bool tapsellMissing, bool manifestMissing, int attempts)

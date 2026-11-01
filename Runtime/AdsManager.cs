@@ -13,44 +13,37 @@ public class AdsManager : MonoSingleton<AdsManager>
         
     }
 
-    public void Init()
+    public void Init(string market)
     {
-        InitAds();
-    }
-
-    private void InitAds()
-    {
+        AdsRulesConfig rules = AdsRulesConfig.Load();
         if (isDevelop)
         {
-            InitTapsell();
+            InitNetwork(rules.developNetwork);
             return;
         }
 
-#if UNITY_EDITOR
-        return;
-#elif IN_GAME
-        return;
-#elif CAFE_BAZAAR
-        InitTapsell();
-        return;
-#elif MY_KET
-        InitTapsell();
-        return;
-#elif ZARIN_PAL
-        InitTapsell();
-        return;
-#elif GOOGLE_PLAY
-        if (RegionManager.Instance.GetUserRegion() == UserRegion.Iran)
-            InitTapsell();
-        else
-            InitApplovin();
-        return;
-#elif (TESTER)
-        InitTapsell();
-        return;
-#else
-        InitAdMob();
+#if !UNITY_EDITOR
+        bool isIran = RegionManager.Instance.GetUserRegion() == UserRegion.Iran;
+        AdsType? network = AdsRulesResolver.GetNetwork(rules, market, isIran);
+        if (network.HasValue)
+            InitNetwork(network.Value);
 #endif
+    }
+
+    private void InitNetwork(AdsType network)
+    {
+        switch (network)
+        {
+            case AdsType.Tapsell:
+                InitTapsell();
+                break;
+            case AdsType.Applovin:
+                InitApplovin();
+                break;
+            case AdsType.AdMob:
+                InitAdMob();
+                break;
+        }
     }
 
     private void InitTapsell()
